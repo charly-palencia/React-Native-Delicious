@@ -1,90 +1,65 @@
 import React, { Component } from "react";
 import {
-  Platform,
-  StyleSheet,
-  Text,
-  View,
-  ImageBackground,
-  Image,
-  Dimensions,
-  TextInput,
-  TouchableOpacity,
-  StatusBar
-} from "react-native";
-
-import DSTextInput from "./src/components/DSTextInput";
-import DSButton from "./src/components/DSButton";
+  createStackNavigator,
+  createDrawerNavigator,
+  createTabNavigator
+} from "react-navigation";
+import Login from "./src/components/screens/Login";
+import NavBar from "./src/components/NavBar";
+import TabBar from "./src/components/TabBar";
+import CategoryIndex from "./src/components/screens/CategoryIndex";
 import DSStyle from "./src/styles";
 
-const { width, height } = Dimensions.get("window"); // window|screen
+let loginContainer;
+const PublicStack = createStackNavigator(
+  {
+    Login: {
+      screen: props => {
+        return <Login loginContainer={loginContainer} />;
+      }
+    }
+  },
+  { headerMode: "none" }
+);
 
-type Props = {};
+const PrivateStack = createDrawerNavigator({
+  internal: createTabNavigator(
+    {
+      options: createStackNavigator(
+        {
+          CategoryIndex: {
+            screen: CategoryIndex
+          }
+        },
+        {
+          navigationOptions: props => ({
+            header: headerProps => <NavBar {...props} />
+          })
+        }
+      )
+    },
+    {
+      tabBarComponent: props => <TabBar {...props} />
+    }
+  )
+});
+
 export default class App extends Component<Props> {
+  state = {
+    logged: false
+  };
+
+  handleLogin = () => {
+    this.setState({ logged: true });
+  };
+
   render() {
-    return (
-      <ImageBackground
-        style={{ width, height }}
-        source={require("./src/assets/img/bg.png")}
-      >
-        <StatusBar barStyle="light-content" />
-        <View style={styles.logoContainer}>
-          <Image source={require("./src/assets/img/logo.png")} />
-        </View>
-
-        <View style={styles.loginContainer}>
-          <DSTextInput
-            sourceIcon={require("./src/assets/img/user.png")}
-            widthIcon={15}
-            heightIcon={20}
-            placeholderTextColor="#FFF"
-            placeholder="Login"
-            marginTop={60}
-          />
-
-          <DSTextInput
-            sourceIcon={require("./src/assets/img/password.png")}
-            widthIcon={15}
-            heightIcon={20}
-            placeholderTextColor="#FFF"
-            placeholder="Password"
-          />
-          <DSButton onPress={this._onPressButton}>Sign In</DSButton>
-          <DSButton
-            onPress={this._onPressButton}
-            underlayColor={DSStyle.colors.facebookShadow}
-            style={{ backgroundColor: DSStyle.colors.facebook }}
-          >
-            Loging with Facebook
-          </DSButton>
-          <Text style={styles.text}>
-            Don't have an account?{" "}
-            <Text style={{ fontWeight: "bold" }}>Sign Up</Text>
-          </Text>
-        </View>
-      </ImageBackground>
+    loginContainer = this;
+    return this.state.logged ? (
+      <PrivateStack />
+    ) : (
+      <PrivateStack />
+      // <PublicStack screenProps={this.handleLogin} />
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#F5FCFF"
-  },
-  logoContainer: {
-    flex: 0.7,
-    justifyContent: "flex-end",
-    alignItems: "center"
-  },
-  loginContainer: {
-    flex: 1,
-    justifyContent: "flex-start",
-    alignItems: "center"
-  },
-  text: {
-    marginTop: 45,
-    color: "#FFF"
-  }
-});
