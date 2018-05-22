@@ -28,7 +28,14 @@ export default class DSButton extends Component<Props> {
     };
   };
   render() {
-    const { onPress, children, style, underlayColor, ...props } = this.props;
+    const {
+      onPress,
+      children,
+      style,
+      underlayColor,
+      textSize,
+      ...props
+    } = this.props;
 
     return (
       <TouchableHighlight
@@ -36,7 +43,7 @@ export default class DSButton extends Component<Props> {
         style={this._containerStyle(style)}
         underlayColor={underlayColor || DSStyle.colors.fourthShadow}
       >
-        <Text style={styles.text}>{children}</Text>
+        <Text style={[styles.text, { fontSize: textSize }]}>{children}</Text>
       </TouchableHighlight>
     );
   }

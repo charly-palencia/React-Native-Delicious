@@ -2,13 +2,18 @@ import React, { Component } from "react";
 import {
   createStackNavigator,
   createDrawerNavigator,
-  createTabNavigator
+  createBottomTabNavigator
 } from "react-navigation";
 import Login from "./src/components/screens/Login";
 import NavBar from "./src/components/NavBar";
 import TabBar from "./src/components/TabBar";
 import CategoryIndex from "./src/components/screens/CategoryIndex";
 import DSStyle from "./src/styles";
+import { YellowBox } from "react-native";
+YellowBox.ignoreWarnings([
+  "Warning: isMounted(...) is deprecated",
+  "Module RCTImageLoader"
+]);
 
 let loginContainer;
 const PublicStack = createStackNavigator(
@@ -23,7 +28,7 @@ const PublicStack = createStackNavigator(
 );
 
 const PrivateStack = createDrawerNavigator({
-  internal: createTabNavigator(
+  internal: createBottomTabNavigator(
     {
       options: createStackNavigator(
         {
